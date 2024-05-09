@@ -64,7 +64,7 @@ This guide provides step-by-step instructions on how to containerize and deploy 
 
 ## Prerequisites
 - Docker installed on your machine. [Install Docker](https://docs.docker.com/get-docker/)
-- Basic understanding of Docker and Docker Compose (if using).
+- Basic understanding of Docker.
 
 ## Docker Setup
 
