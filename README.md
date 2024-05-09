@@ -3,7 +3,7 @@
 ![441520357_10161288801308427_5182253897433001652_n](https://github.com/01000001-01001110/Techno-Rabbit/assets/48245017/d21680a5-2714-4346-9a81-e919108010a9)
 
 ## Overview
-The **[Techno-Rabbit](https://discord.com/oauth2/authorize?client_id=1237173463265837119&permissions=8&scope=bot)** Bot is currently a Discord bot designed to send personalized welcome and goodbye messages to members as they join and leave a server. It uses a combination of predefined phrases to add a unique touch to each message.
+The **[Techno-Rabbit](https://discord.com/oauth2/authorize?client_id=1238097527086120960&permissions=2147953824&scope=bot+applications.commands)** Bot is currently a Discord bot designed to send personalized welcome and goodbye messages to members as they join and leave a server. It uses a combination of predefined phrases to add a unique touch to each message.
 
 ## Features
 - **Welcome Messages**: Sends a custom welcome message when a new member joins the server.
