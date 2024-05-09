@@ -119,8 +119,8 @@ client.on('guildCreate', async guild => {
 
     const embed = new EmbedBuilder()
         .setColor('#0099ff')
-        .setTitle('Hello, I am the new bot "Welcomer"!')
-        .setDescription('To configure me, please use the `/setup_welcome` & `/setup_goodbye` command in the respective channel where you want me to send the welcome and goodbye messages.');
+        .setTitle('Hello, I am the new bot "Techno-Rabbit"!')
+        .setDescription('To configure me, please use the `/setup_welcome` & `/setup_goodbye` command in the respective channel where you want me to send the welcome and goodbye messages. If you run into any issue or have a suggestion you can add it [here:]('https://github.com/01000001-01001110/Techno-Rabbit/issues');
 
     try {
         await owner.send({ embeds: [embed] });
