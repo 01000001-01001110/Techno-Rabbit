@@ -3,55 +3,157 @@
 ![441520357_10161288801308427_5182253897433001652_n](https://github.com/01000001-01001110/Techno-Rabbit/assets/48245017/d21680a5-2714-4346-9a81-e919108010a9)
 
 ## Overview
-The **[Techno-Rabbit](https://discord.com/oauth2/authorize?client_id=1238097527086120960&permissions=2147953824&scope=bot+applications.commands)** Bot is currently a Discord bot designed to send personalized welcome and goodbye messages to members as they join and leave a server. It uses a combination of predefined phrases to add a unique touch to each message.
+The **[Techno-Rabbit](https://discord.com/oauth2/authorize?client_id=1238097527086120960&permissions=2147953824&scope=bot+applications.commands)** Bot is a Discord bot designed to send personalized welcome and goodbye messages to members as they join and leave a server. It uses a combination of predefined phrases to add a unique touch to each message. The bot also includes commands to play games like rock-paper-scissors and ping command functionality.
+# Techno-Rabbit Bot Documentation
 
 ## Features
-- **Welcome Messages**: Sends a custom welcome message when a new member joins the server.
-- **Goodbye Messages**: Sends a custom goodbye message when a member leaves the server.
-- **Customizable Channels**: Server administrators can set up separate channels for welcome and goodbye messages using specific commands.
+
+- **Welcome Messages:** Sends a custom welcome message when a new member joins the server.
+- **Goodbye Messages:** Sends a custom goodbye message when a member leaves the server.
+- **Customizable Channels:** Server administrators can set up separate channels for welcome and goodbye messages using specific commands.
+- **Games and Utilities:** Includes commands for playing rock-paper-scissors, rock-paper-scissors-lizard-spock, and a ping command to check latency.
 
 ## Setup
+
 Before you start using the bot, you need to set it up with the necessary Discord permissions and configure the environment variables.
 
 ### Permissions Required
-- `Guilds`
-- `GuildMessages`
-- `MessageContent`
-- `GuildMembers`
-- `DirectMessages`
+
+- Guilds
+- GuildMessages
+- MessageContent
+- GuildMembers
+- DirectMessages
 
 ### Environment Variables
+
 - `DISCORD_BOT_TOKEN`: The token used to authenticate your bot with Discord.
-- `DISCORD_APP_ID`: The Discord appID your bot uses. Used to register the slash commands.
+- `DISCORD_APP_ID`: The Discord app ID your bot uses. Used to register the slash commands.
+- `MONGODB_URI`: The URI for connecting to your MongoDB database.
+
+### Folder Structure
+
+bot/<br>
+|-- commands/<br>
+|   |-- setup_welcome.js<br>
+|   |-- setup_goodbye.js<br>
+|   |-- ping.js<br>
+|   |-- rps.js<br>
+|   |-- rpsls.js<br>
+|-- index.js<br>
+|-- registerCommands.js<br>
+|-- .env<br>
+
 
 ## Configuration
+
 To configure the channels for welcome and goodbye messages, use the following slash commands in your server:
 
 ### Commands
+
 - `/setup_welcome`: Sets the current channel as the welcome message channel.
 - `/setup_goodbye`: Sets the current channel as the goodbye message channel.
+- `/ping`: Checks the bot's latency.
+- `/rps`: Play a game of rock-paper-scissors.
+- `/rpsls`: Play a game of rock-paper-scissors-lizard-spock.
 
 These commands must be run in the text channels where you want the bot to send welcome or goodbye messages. Ensure you have administrative permissions to use these commands.
 
 ## Usage
+
 Once configured, the bot will automatically send messages in the designated channels:
 
-- **Welcome Message Example**: 🎗️ Welcome to [Guild Name], you beautiful creature [Member Name]!
-- **Goodbye Message Example**: Goodbye [Member Name]! We hope to see you again.
+- **Welcome Message Example:** 🎗️ Welcome to [Guild Name], you beautiful creature [Member Name]!
+- **Goodbye Message Example:** Goodbye [Member Name]! We hope to see you again.
 
 The messages include random phrases from predefined lists to make each greeting unique.
 
 ## Error Handling
+
 The bot logs errors to the console if it encounters issues with reading the configuration file or sending messages. Ensure the bot has appropriate permissions and the channel IDs are correctly configured.
 
 ## Installation
+
 To install the bot on your server, add it via the Discord OAuth2 flow with the necessary permissions. Ensure the environment variables are set correctly in your hosting environment.
 
 ## Source Code
 The source code for the bot is maintained on GitHub. You can view and contribute to the code at [GitHub Repository](https://github.com/01000001-01001110/Techno-Rabbit).
 
 ## Support
-For support, you can contact the me team through the GitHub issues page or via Discord at [My Discord Testing Server](https://discord.gg/8uCxNUmXe3).
+For support, you can contact me through the GitHub issues page or via Discord at [My Discord Testing Server](https://discord.gg/8uCxNUmXe3).
+
+## Main Bot File (`index.js`)
+
+The `index.js` file is responsible for initializing the bot, connecting to MongoDB, and dynamically loading commands from the `commands` directory. It also includes handlers for various events such as member joins, member leaves, and command interactions.
+
+### Key Points:
+
+- **Database Connection:** Connects to MongoDB and attaches the database instance to `discordClient`.
+- **Command Loading:** Dynamically loads command files from the `commands` directory into `discordClient.commands`.
+- **Event Handlers:** Handles events like `guildMemberAdd`, `guildMemberRemove`, `guildCreate`, `guildDelete`, `error`, and `interactionCreate`.
+
+## Command Registration File (`registerCommands.js`)
+
+The `registerCommands.js` file reads all command files in the `commands` directory and registers them with Discord using the REST API.
+
+### Key Points:
+
+- **Reading Command Files:** Reads all `.js` files in the `commands` directory.
+- **Registering Commands:** Uses the Discord REST API to register these commands with the bot's application ID.
+
+## Command Files
+
+### `commands/setup_welcome.js`
+
+Sets up the welcome channel for the guild.
+
+#### Key Points:
+
+- **Permissions Check:** Ensures the user has `ADMINISTRATOR` permissions.
+- **Channel Type Check:** Ensures the command is used in a guild text channel.
+- **Database Update:** Updates the guild configuration in MongoDB to store the welcome channel ID.
+
+### `commands/setup_goodbye.js`
+
+Sets up the goodbye channel for the guild.
+
+#### Key Points:
+
+- **Permissions Check:** Ensures the user has `ADMINISTRATOR` permissions.
+- **Channel Type Check:** Ensures the command is used in a guild text channel.
+- **Database Update:** Updates the guild configuration in MongoDB to store the goodbye channel ID.
+
+### `commands/ping.js`
+
+Replies with "Pong!" and roundtrip times for the bot and API latency.
+
+#### Key Points:
+
+- **Bot Latency:** Calculates the time it takes for the bot to respond to a command.
+- **API Latency:** Calculates the WebSocket ping time to Discord's API.
+
+### `commands/rps.js`
+
+Plays a game of rock-paper-scissors with the user.
+
+#### Key Points:
+
+- **User Choice:** Takes the user's choice of rock, paper, or scissors.
+- **Bot Choice:** Randomly selects rock, paper, or scissors for the bot.
+- **Result Calculation:** Determines the winner based on the choices.
+
+### `commands/rpsls.js`
+
+Plays a game of rock-paper-scissors-lizard-spock with the user.
+
+#### Key Points:
+
+- **User Choice:** Takes the user's choice of rock, paper, scissors, lizard, or Spock.
+- **Bot Choice:** Randomly selects rock, paper, scissors, lizard, or Spock for the bot.
+- **Result Calculation:** Determines the winner based on the choices and extended rules.
+
+With these modular command files, it is much more easily managable and now able to expand the bot's functionality while keeping the main file (`index.js`) clean and organized. At least that is the attempt.
+
 
 <br>
 <br>
