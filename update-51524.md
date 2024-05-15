@@ -12,7 +12,7 @@ bot/<br>
 |   |-- ping.js<br>
 |   |-- rps.js<br>
 |   |-- rpsls.js<br>
-|-- index.js<br>
+|-- bot.js<br>
 |-- registerCommands.js<br>
 |-- .env<br>
 
@@ -29,9 +29,9 @@ MONGODB_URI=your_mongodb_uri<br>
 
 Replace `your_discord_bot_token`, `your_discord_app_id`, and `your_mongodb_uri` with your actual credentials.
 
-## Main Bot File (`index.js`)
+## Main Bot File (`bot.js`)
 
-The `index.js` file is responsible for initializing the bot, connecting to MongoDB, and dynamically loading commands from the `commands` directory. It also includes handlers for various events such as member joins, member leaves, and command interactions.
+The `bot.js` file is responsible for initializing the bot, connecting to MongoDB, and dynamically loading commands from the `commands` directory. It also includes handlers for various events such as member joins, member leaves, and command interactions.
 
 ### Key Points:
 
@@ -99,4 +99,4 @@ Plays a game of rock-paper-scissors-lizard-spock with the user.
 - **Bot Choice:** Randomly selects rock, paper, scissors, lizard, or Spock for the bot.
 - **Result Calculation:** Determines the winner based on the choices and extended rules.
 
-With these modular command files, you can easily manage and expand your bot's functionality while keeping the main file (`index.js`) clean and organized.
+With these modular command files, you can easily manage and expand your bot's functionality while keeping the main file (`bot.js`) clean and organized.
