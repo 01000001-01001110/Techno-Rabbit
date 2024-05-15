@@ -1,16 +1,12 @@
 require('dotenv').config();
-const fs = require('fs-extra'); 
+const { MongoClient } = require('mongodb');
+const { Client, GatewayIntentBits, Collection, EmbedBuilder, ChannelType } = require('discord.js');
+const fs = require('fs');
 
-const { 
-    Client, 
-    GatewayIntentBits, 
-    EmbedBuilder, 
-    ActionRowBuilder, 
-    StringSelectMenuBuilder, // Use StringSelectMenuBuilder instead of SelectMenuBuilder
-    ChannelType 
-} = require('discord.js');
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri);
 
-const client = new Client({
+const discordClient = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
@@ -20,8 +16,24 @@ const client = new Client({
     ]
 });
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+discordClient.commands = new Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    discordClient.commands.set(command.data.name, command);
+}
+
+let db;
+
+discordClient.once('ready', async () => {
+    await client.connect();
+    db = client.db('discordBot'); // Name of your database
+    discordClient.db = db; // Attach the db to discordClient
+    console.log(`Logged in as ${discordClient.user.tag} and connected to MongoDB!`);
+
+    const guilds = discordClient.guilds.cache.map(guild => `${guild.name} (ID: ${guild.id})`);
+    console.log(`The bot is currently in the following servers:\n${guilds.join('\n')}`);
 });
 
 const welcomePhrases = [
@@ -50,58 +62,37 @@ const goodbyePhrases = [
     "Don't be a stranger"
 ];
 
-client.on('guildMemberAdd', async member => {
-    let config;
-    try {
-        config = await fs.readJson('./channelConfig.json');
-    } catch (error) {
-        console.log('Error reading channel configuration:', error);
-        return;
-    }
+discordClient.on('guildMemberAdd', async member => {
+    const config = await db.collection('guildConfigs').findOne({ guildId: member.guild.id });
 
-    const welcomeChannelId = config[member.guild.id]?.welcomeChannelId;
-    if (!welcomeChannelId) {
+    if (!config || !config.welcomeChannelId) {
         console.log("Welcome channel ID not configured.");
         return;
     }
 
     const guildName = member.guild.name;
-    const welcomeChannel = member.guild.channels.cache.get(welcomeChannelId);
+    const welcomeChannel = member.guild.channels.cache.get(config.welcomeChannelId);
     if (welcomeChannel) {
-        // Randomly select a phrase from the array
         const randomPhrase = welcomePhrases[Math.floor(Math.random() * welcomePhrases.length)];
-        
-        // Construct the message with the random phrase
-        welcomeChannel.send(`🎗️ Welcome to ${guildName}, ${randomPhrase} ${member}!`);
+        welcomeChannel.send(`?? Welcome to ${guildName}, ${randomPhrase} ${member}!`);
     } else {
         console.log("Welcome channel not found");
     }
 });
 
-client.on('guildMemberRemove', async member => {
+discordClient.on('guildMemberRemove', async member => {
     console.log(`Member leaving: ${member.displayName}`);
 
-    let config;
-    try {
-        config = await fs.readJson('./channelConfig.json');
-        console.log('Configuration loaded:', config);
-    } catch (error) {
-        console.log('Error reading channel configuration:', error);
-        return;
-    }
+    const config = await db.collection('guildConfigs').findOne({ guildId: member.guild.id });
 
-    const goodbyeChannelId = config[member.guild.id]?.goodbyeChannelId;
-    if (!goodbyeChannelId) {
+    if (!config || !config.goodbyeChannelId) {
         console.log("Goodbye channel ID not configured.");
         return;
     }
 
-    const goodbyeChannel = member.guild.channels.cache.get(goodbyeChannelId);
+    const goodbyeChannel = member.guild.channels.cache.get(config.goodbyeChannelId);
     if (goodbyeChannel) {
-        // Randomly select a phrase from the goodbyePhrases array
         const randomPhrase = goodbyePhrases[Math.floor(Math.random() * goodbyePhrases.length)];
-        
-        // Construct the message with the random phrase
         goodbyeChannel.send(`Goodbye ${member.displayName}! ${randomPhrase}`)
             .then(() => console.log("Goodbye message sent."))
             .catch(error => console.log("Failed to send goodbye message:", error));
@@ -110,7 +101,9 @@ client.on('guildMemberRemove', async member => {
     }
 });
 
-client.on('guildCreate', async guild => {
+discordClient.on('guildCreate', async guild => {
+    console.log(`Joined a new guild: ${guild.name} (ID: ${guild.id})`);
+
     let owner = await guild.fetchOwner();
     if (!owner) {
         console.log('Failed to fetch the guild owner.');
@@ -119,8 +112,8 @@ client.on('guildCreate', async guild => {
 
     const embed = new EmbedBuilder()
         .setColor('#0099ff')
-        .setTitle('Hello, I am the new bot "Techno-Rabbit"!')
-        .setDescription('To configure me, please use the `/setup_welcome` & `/setup_goodbye` command in the respective channel where you want me to send the welcome and goodbye messages. If you run into any issue or have a suggestion you can add it [here:]('https://github.com/01000001-01001110/Techno-Rabbit/issues');
+        .setTitle('Hello, I am the new bot "Welcomer"!')
+        .setDescription('To configure me, please use the `/setup_welcome` & `/setup_goodbye` command in the respective channel where you want me to send the welcome and goodbye messages.');
 
     try {
         await owner.send({ embeds: [embed] });
@@ -129,51 +122,27 @@ client.on('guildCreate', async guild => {
     }
 });
 
-client.on('error', error => {
+discordClient.on('guildDelete', guild => {
+    console.log(`Removed from a guild: ${guild.name} (ID: ${guild.id})`);
+});
+
+discordClient.on('error', error => {
     console.log('An error occurred:', error);
 });
 
-client.on('interactionCreate', async interaction => {
+discordClient.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
-    const { commandName, channel } = interaction;
+    const command = discordClient.commands.get(interaction.commandName);
 
-    if (!interaction.member.permissions.has('ADMINISTRATOR')) {
-        await interaction.reply({ content: 'You need administrator permissions to run this command!', ephemeral: true });
-        return;
-    }
+    if (!command) return;
 
-    if (!channel || channel.type !== ChannelType.GuildText) {
-        await interaction.reply({ content: 'This command can only be used in a server text channel.', ephemeral: true });
-        return;
-    }
-
-    let configKey;
-    if (commandName === 'setup_welcome') {
-        configKey = 'welcomeChannelId';
-    } else if (commandName === 'setup_goodbye') {
-        configKey = 'goodbyeChannelId';
-    } else {
-        return;
-    }
-
-    const filePath = './channelConfig.json';
-    let config = {};
     try {
-        config = await fs.readJson(filePath);
+        await command.execute(interaction);
     } catch (error) {
-        console.log('No existing configuration file, creating a new one.');
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
-
-    // Update the configuration for the specific channel
-    if (!config[interaction.guild.id]) {
-        config[interaction.guild.id] = {};
-    }
-    config[interaction.guild.id][configKey] = channel.id;
-    await fs.writeJson(filePath, config, { spaces: 4 });
-    console.log('Channel configuration saved.');
-
-    await interaction.reply({ content: `Setup complete! The ${commandName.split('_')[1]} channel has been set to this channel: ${channel.name}`, ephemeral: true });
 });
 
-client.login(process.env.DISCORD_BOT_TOKEN);
+discordClient.login(process.env.DISCORD_BOT_TOKEN);
