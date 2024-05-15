@@ -40,7 +40,7 @@ bot/<br>
 |   |-- ping.js<br>
 |   |-- rps.js<br>
 |   |-- rpsls.js<br>
-|-- index.js<br>
+|-- bot.js<br>
 |-- registerCommands.js<br>
 |-- .env<br>
 
@@ -82,9 +82,9 @@ The source code for the bot is maintained on GitHub. You can view and contribute
 ## Support
 For support, you can contact me through the GitHub issues page or via Discord at [My Discord Testing Server](https://discord.gg/8uCxNUmXe3).
 
-## Main Bot File (`index.js`)
+## Main Bot File (`bot.js`)
 
-The `index.js` file is responsible for initializing the bot, connecting to MongoDB, and dynamically loading commands from the `commands` directory. It also includes handlers for various events such as member joins, member leaves, and command interactions.
+The `bot.js` file is responsible for initializing the bot, connecting to MongoDB, and dynamically loading commands from the `commands` directory. It also includes handlers for various events such as member joins, member leaves, and command interactions.
 
 ### Key Points:
 
@@ -152,7 +152,7 @@ Plays a game of rock-paper-scissors-lizard-spock with the user.
 - **Bot Choice:** Randomly selects rock, paper, scissors, lizard, or Spock for the bot.
 - **Result Calculation:** Determines the winner based on the choices and extended rules.
 
-With these modular command files, it is much more easily managable and now able to expand the bot's functionality while keeping the main file (`index.js`) clean and organized. At least that is the attempt.
+With these modular command files, it is much more easily managable and now able to expand the bot's functionality while keeping the main file (`bot.js`) clean and organized. At least that is the attempt.
 
 
 <br>
