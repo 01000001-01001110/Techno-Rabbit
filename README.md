@@ -152,6 +152,84 @@ Plays a game of rock-paper-scissors-lizard-spock with the user.
 - **Bot Choice:** Randomly selects rock, paper, scissors, lizard, or Spock for the bot.
 - **Result Calculation:** Determines the winner based on the choices and extended rules.
 
+### `models/Question.js`
+Defines the schema for trivia questions.
+
+#### Key Points:
+
+- **Schema Definition:** Specifies the structure of a trivia question document.
+- **Mongoose Model:** Creates a Mongoose model based on the schema.
+
+## Newly Created API to host trivia Questions
+
+Fetch all questions.
+
+**Request:**
+```
+curl -X GET http://localhost:3000/questions
+```
+**Request:**
+
+#### 2. GET /questions/:id
+
+Fetch a specific question by ID.
+
+**Request:**
+
+```
+curl -X GET http://localhost:3000/questions/<id>
+```
+
+#### 3. POST /questions
+
+Create a new question.
+
+**Request:**
+
+```
+curl -X POST http://localhost:3000/questions
+-H "Content-Type: application/json"
+-d '{
+"type": "multiple",
+"difficulty": "medium",
+"category": "History",
+"question": "Joseph Stalin had a criminal past doing what?",
+"correct_answer": "Robbing Trains",
+"incorrect_answers": ["Murder for Hire", "Tax Evasion", "Identity Fraud"]
+}'
+```
+
+#### 4. PUT /questions/:id
+
+Update an existing question.
+
+**Request:**
+
+```
+curl -X PUT http://localhost:3000/questions/<id>
+-H "Content-Type: application/json"
+-d '{
+"type": "multiple",
+"difficulty": "easy",
+"category": "Science",
+"question": "What is the chemical symbol for the element oxygen?",
+"correct_answer": "O",
+"incorrect_answers": ["O2", "Ox", "Oz"]
+}'
+```
+
+#### 5. DELETE /questions/:id
+
+Delete a question.
+
+**Request:**
+
+```
+curl -X DELETE http://localhost:3000/questions/<id>
+```
+
+### MongoDB Setup in Docker for the Trivia Questions API
+<br>
 With these modular command files, it is much more easily managable and now able to expand the bot's functionality while keeping the main file (`bot.js`) clean and organized. At least that is the attempt.
 
 
