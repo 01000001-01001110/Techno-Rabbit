@@ -3,7 +3,6 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const fs = require('fs');
 
-// Read command files from the commands directory
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -18,7 +17,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_BOT_TOKEN);
     try {
         console.log('Started refreshing application (/) commands.');
         await rest.put(
-            Routes.applicationCommands(process.env.DISCORD_APP_ID),
+            Routes.applicationCommands(process.env.DISCORD_APP_ID), // Global registration
             { body: commands },
         );
         console.log('Successfully reloaded application (/) commands.');
