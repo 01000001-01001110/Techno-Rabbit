@@ -152,13 +152,45 @@ Plays a game of rock-paper-scissors-lizard-spock with the user.
 - **Bot Choice:** Randomly selects rock, paper, scissors, lizard, or Spock for the bot.
 - **Result Calculation:** Determines the winner based on the choices and extended rules.
 
-### `models/Question.js`
-Defines the schema for trivia questions.
+### `commands/hangman.js`
+#### Hangman
 
-#### Key Points:
+Adds a hangman game command.
 
-- **Schema Definition:** Specifies the structure of a trivia question document.
-- **Mongoose Model:** Creates a Mongoose model based on the schema.
+**Key Points:**
+
+- **Game Logic:** Implements the logic for playing hangman.
+- **State Management:** Tracks the state of the game including guessed letters and remaining attempts.
+
+### `commands/reminders.js`
+#### Reminders
+
+Adds a reminders command to set and manage reminders.
+
+**Key Points:**
+
+- **Time Management:** Allows users to set reminders for specific times.
+- **Notifications:** Sends notifications when reminders are due.
+
+### `commands/tictactoe.js`
+#### Tic-Tac-Toe
+
+Adds a tic-tac-toe game command.
+
+**Key Points:**
+
+- **Game Logic:** Implements the logic for playing tic-tac-toe.
+- **Multiplayer:** Allows two users to play against each other.
+
+### `commands/trivia.js`
+#### Trivia
+
+Adds slash commands for trivia games.
+
+**Key Points:**
+
+- **Interactive Gameplay:** Users can start trivia games directly in Discord.
+- **Scoring:** Tracks scores for users participating in trivia games.
 
 ## Newly Created API to host trivia Questions
 
